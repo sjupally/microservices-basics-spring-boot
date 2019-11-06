@@ -29,9 +29,8 @@ task createWrapper(type: Wrapper) {
     gradleVersion = '3.5'
 }
 
-// Used by the Docker gradle plugin, group refers to the account under which the docker image is created
-group = 'anilallewar'
-mainClassName = 'com.anilallewar.microservices.config.ConfigApplication'
+
+mainClassName = 'com.example.microservices.config.ConfigApplication'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -58,31 +57,6 @@ dependencies {
 jar {
     baseName = "${project.jarName}"
     version =  "${project.versionName}"
-}
-
-/*
-* This task builds the docker image by copying the output of the "jar" gradle command
-* and moving it to the "build/docker" directory which is used as the staging directory 
-* by the docker gradle plugin. We then build the docker image by invoking the appropriate
-* Dockerfile.  
-*/
-task buildDocker(type: Docker, dependsOn: build) {
-  push = false
-  applicationName = jar.baseName
-  tagVersion = jar.version
-  dockerfile = file('src/main/docker/Dockerfile')
-  doFirst {
-    // Copy the built fat jar to the Docker plugin staging directory
-    copy {
-      from jar
-      into stageDir
-    }
-    // Copy the run.sh file to the Docker plugin staging directory
-    copy {
-      from "${project.buildDir}/resources/main/run.sh"
-      into stageDir
-    }
-  }
 }
 
 run {
